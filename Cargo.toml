@@ -5,3 +5,4 @@ authors = ["石博文 <sbw@sbw.so>"]
 
 [dependencies]
 regex = "*"
+rand = "*"

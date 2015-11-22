@@ -14,9 +14,11 @@ fn main() {
     let addr = SocketAddr::new(host.ip(), port);
     let mut irc = IRCClient::new();
     irc.set_addr(addr);
-    irc.set_nick_name("username1");
-    irc.set_real_name("username");
-    irc.set_password("mypass");
+    irc.set_nick_name("Vivians");
+    irc.set_real_name("Vivians");
+    irc.set_password("Vivians");
+    irc.append_auto_join_channel("test1");
+//    irc.append_auto_join_channel("deepin");
 
     irc.startup();
 }

@@ -1,4 +1,6 @@
 
+extern crate rand;
+
 use irc_client::Message;
 
 use std::io::*;
@@ -6,6 +8,7 @@ use std::net::TcpStream;
 use std::net::SocketAddr;
 use std::thread;
 use std::sync::mpsc::channel;
+use self::rand::{thread_rng, Rng};
 
 pub struct IRCClient {
     irc_socket: Option<TcpStream>,
@@ -13,6 +16,7 @@ pub struct IRCClient {
     irc_nick_name: String,
     irc_real_name: String,
     irc_password: String,
+    auto_join_channels: Vec<String>,
 }
 
 impl IRCClient {
@@ -24,7 +28,12 @@ impl IRCClient {
             irc_nick_name: "IRCRobot".to_owned(),
             irc_real_name: "IRCRobot".to_owned(),
             irc_password: "*".to_owned(),
+            auto_join_channels: Vec::new(),
         }
+    }
+
+    pub fn append_auto_join_channel(&mut self, channel: &str) {
+        self.auto_join_channels.push(channel.to_owned());
     }
 
     pub fn set_nick_name(&mut self, name: &str) {
@@ -141,9 +150,22 @@ impl IRCClient {
                 "PING" => self.process_ping(&msg),
                 "JOIN" => self.process_join(&msg),
                 "PRIVMSG" => self.process_privmsg(&msg),
+                "NOTICE" => self.process_notice(&msg),
+                "433" => self.process_433(&msg),
                 _ => println!("Msg not handled: {}", msg),
             }
         }
+    }
+
+    fn join_channels(&mut self) {
+        for channel in self.auto_join_channels.clone().iter_mut() {
+            self.join(channel);
+        }
+    }
+
+    fn join(&mut self, channel: &str) {
+        let msg = "JOIN #".to_owned() + channel;
+        self.command(&msg);
     }
 
     // PRIVMSG
@@ -155,16 +177,11 @@ impl IRCClient {
     // process JOIN command
     fn process_join(&mut self, msg: &Message) {
         println!("Process JOIN command");
-        let send;
         let nick = msg.nickname();
-        if nick == self.irc_nick_name {
-            return;
-            send = "hello every!".to_owned();
-        } else {
-            send = format!("hi, {} :-)", nick);
-        }
 
-        self.privmsg(msg.channel(), &send);
+        if nick != self.irc_nick_name {
+            self.privmsg(msg.channel(), &format!("hi, {} :-)", nick));
+        }
     }
 
     // process PING command
@@ -174,8 +191,28 @@ impl IRCClient {
         self.command(&command);
     }
 
+    fn process_notice(&mut self, msg: &Message) {
+        println!("Process NOTICK command");
+
+        let from = msg.nickname();
+
+        if from == "NickServ" {
+            self.join_channels();
+        }
+    }
+
     fn process_privmsg(&mut self, msg: &Message) {
         println!("Process PRIVMSG command");
 //        self.privmsg(msg.channel(), msg.content());
+    }
+
+    fn process_433(&mut self, msg: &Message) {
+        println!("Process 433");
+
+        let new_nick = format!("{}{}", self.irc_nick_name, thread_rng().gen_range(0, 100));
+        self.irc_nick_name = new_nick;
+
+        let msg = format!("NICK {}", self.irc_nick_name);
+        self.command(&msg);
     }
 }

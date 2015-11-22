@@ -117,4 +117,7 @@ fn message_test() {
 
     let msg = Message::new(":sbw!~Thunderbi@1.1.1.1 PRIVMSG #test1 :b, a \r\n").unwrap();
     assert_eq!(msg.content(), "b, a");
+
+    let msg = Message::new(":wilhelm.freenode.net 433 * username1 :Nickname is already in use.").unwrap();
+    assert_eq!(msg.command(), "433");
 }
