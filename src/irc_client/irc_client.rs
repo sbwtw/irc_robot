@@ -2,6 +2,7 @@
 extern crate rand;
 
 use irc_client::Message;
+use irc_client::url;
 
 use std::io::*;
 use std::net::TcpStream;
@@ -151,15 +152,17 @@ impl IRCClient {
                 "JOIN" => self.process_join(&msg),
                 "PRIVMSG" => self.process_privmsg(&msg),
                 "NOTICE" => self.process_notice(&msg),
-                "433" => self.process_433(&msg),
+                "433" => self.process_433(),
                 _ => println!("Msg not handled: {}", msg),
             }
         }
     }
 
     fn join_channels(&mut self) {
-        for channel in self.auto_join_channels.clone().iter_mut() {
-            self.join(channel);
+        let channels = self.auto_join_channels.clone();
+
+        for channel in channels {
+            self.join(&channel);
         }
     }
 
@@ -203,10 +206,15 @@ impl IRCClient {
 
     fn process_privmsg(&mut self, msg: &Message) {
         println!("Process PRIVMSG command");
-//        self.privmsg(msg.channel(), msg.content());
+
+        let content = msg.content();
+
+        if let Some(res) = url::resolv_url(content) {
+            self.privmsg(msg.channel(), &res[..]);
+        }
     }
 
-    fn process_433(&mut self, msg: &Message) {
+    fn process_433(&mut self) {
         println!("Process 433");
 
         let new_nick = format!("{}{}", self.irc_nick_name, thread_rng().gen_range(0, 100));

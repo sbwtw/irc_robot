@@ -1,7 +1,5 @@
 
-extern crate regex;
-
-use self::regex::Regex;
+use irc_client::regex::Regex;
 use std::fmt;
 
 pub struct Message {
