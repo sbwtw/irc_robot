@@ -5,6 +5,7 @@ pub mod url {
     use irc_client::hyper;
     use irc_client::hyper::Client;
     use std::io::Read;
+    use std::time::Duration;
 
     pub fn resolv_url(content: & str) -> Option<String> {
         let url = get_url(content);
@@ -14,7 +15,8 @@ pub mod url {
         }
 
         let url = url.unwrap();
-        let request = Client::new();
+        let mut request = Client::new();
+        request.set_read_timeout(Some(Duration::from_secs(5)));
         let mut response = request.get(url).send().unwrap();
 
         if response.status != hyper::Ok {

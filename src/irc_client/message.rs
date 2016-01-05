@@ -17,7 +17,7 @@ impl Message {
         let command: String;
 
         let list: Vec<&str> = msg.split(" ").collect();
-        if list.len() <= 2 {
+        if list.len() < 2 {
             return Err("parse error.");
         }
 

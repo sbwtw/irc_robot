@@ -109,6 +109,8 @@ impl IRCClient {
                                                   &self.irc_real_name);
         self.command(command);
 
+        self.join_channels();
+
         //'msg: loop {
             //// check command
             //let command = command_rx.try_recv();
@@ -237,6 +239,7 @@ impl Handler for IRCClient {
 
         if events.is_writable() && self.remaining.len() != 0 {
             self.irc_socket.write_all(self.remaining[0].as_bytes());
+            self.irc_socket.flush();
             self.remaining.remove(0);
         }
 
@@ -251,11 +254,19 @@ impl Handler for IRCClient {
             }
         }
 
+        let mut event_set = EventSet::readable();
+
+        if self.remaining.len() != 0 {
+            event_set = event_set | EventSet::writable();
+        }
+
+
         {
             //let s = self.irc_socket;
             //let t = self.mio_token;
 
-            event_loop.reregister(&self.irc_socket, self.mio_token.unwrap(), EventSet::all(), PollOpt::all());
+            //event_loop.reregister(&self.irc_socket, self.mio_token.unwrap(), EventSet::all(), PollOpt::all());
+            event_loop.reregister(&self.irc_socket, self.mio_token.unwrap(), event_set, PollOpt::oneshot());
         }
     }
 }
