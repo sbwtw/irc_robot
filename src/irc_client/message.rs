@@ -1,6 +1,8 @@
 
 use irc_client::regex::Regex;
 use std::fmt;
+use std::fmt::{Debug, Display, Formatter};
+use std::str::FromStr;
 
 pub struct Message {
     raw_message: String,
@@ -10,13 +12,13 @@ pub struct Message {
 }
 
 impl Message {
-    pub fn new(msg: &str) -> Option<Message> {
+    pub fn new(msg: &str) -> Result<Message, &'static str> {
         let mut prefix: String = String::new();
         let command: String;
 
         let list: Vec<&str> = msg.split(" ").collect();
-        if list.len() == 0 {
-            return None;
+        if list.len() <= 2 {
+            return Err("parse error.");
         }
 
         let first = list[0];
@@ -31,7 +33,7 @@ impl Message {
         }
         let (_, params) = msg.split_at(pass_size);
 
-        Some(Message{
+        Ok(Message{
             raw_message: msg.to_owned(),
             prefix: prefix,
             command: command,
@@ -88,12 +90,27 @@ impl Message {
     }
 }
 
-impl fmt::Display for Message {
+impl Display for Message {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{:?}", self)
+    }
+}
+
+impl Debug for Message {
+
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "\nraw_message: {}", self.raw_message).unwrap();
         writeln!(f, "prefix: {}", self.prefix).unwrap();
         writeln!(f, "command: {}", self.command()).unwrap();
         writeln!(f, "params: {}", self.params())
+    }
+}
+
+impl FromStr for Message {
+    type Err = &'static str;
+
+    fn from_str(s: &str) -> Result<Self, &'static str> {
+        Message::new(s)
     }
 }
 
@@ -116,6 +133,6 @@ fn message_test() {
     let msg = Message::new(":sbw!~Thunderbi@1.1.1.1 PRIVMSG #test1 :b, a \r\n").unwrap();
     assert_eq!(msg.content(), "b, a");
 
-    let msg = Message::new(":wilhelm.freenode.net 433 * username1 :Nickname is already in use.").unwrap();
+    let msg: Message = ":wilhelm.freenode.net 433 * username1 :Nickname is already in use.".parse().unwrap();
     assert_eq!(msg.command(), "433");
 }
