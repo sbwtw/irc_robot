@@ -17,7 +17,13 @@ pub mod url {
         let url = url.unwrap();
         let mut request = Client::new();
         request.set_read_timeout(Some(Duration::from_secs(5)));
-        let mut response = request.get(url).send().unwrap();
+        let response = request.get(url).send();
+
+        if response.is_err() {
+            return None;
+        }
+
+        let mut response = response.unwrap();
 
         if response.status != hyper::Ok {
             let res = format!("↑ Err: {}", response.status);

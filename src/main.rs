@@ -9,9 +9,7 @@ mod irc_client;
 use irc_client::IRCClient;
 
 use mio::{Token, EventLoop, EventSet, PollOpt};
-use mio::tcp::TcpStream;
 
-use std::{str, mem};
 use std::net::{SocketAddr};
 
 const IRC_CLIENT: Token = Token(0);
@@ -36,6 +34,6 @@ fn main() {
     irc.append_auto_join_channel("test1");
     irc.startup();
 
-    event_loop.register(irc.socket(), IRC_CLIENT, EventSet::readable(), PollOpt::oneshot());
-    event_loop.run(&mut irc);
+    let _ = event_loop.register(irc.socket(), IRC_CLIENT, EventSet::readable(), PollOpt::oneshot());
+    let _ = event_loop.run(&mut irc);
 }

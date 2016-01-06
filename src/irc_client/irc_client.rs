@@ -7,7 +7,6 @@ use irc_client::url;
 
 use std::io::*;
 use std::net::SocketAddr;
-use std::thread;
 use std::sync::mpsc::channel;
 
 use self::rand::{thread_rng, Rng};
@@ -226,6 +225,23 @@ impl IRCClient {
         let msg = format!("NICK {}", self.irc_nick_name);
         self.command(&msg);
     }
+
+    fn ready_read(&mut self) {
+        let mut buf: String = String::new();
+        self.irc_socket.read_to_string(&mut buf);
+
+        println!("read: {}", buf);
+
+        if let Ok(msg) = buf.parse::<Message>() {
+            self.process(&msg);
+        }
+    }
+
+    fn ready_write(&mut self) {
+        let _ = self.irc_socket.write_all(self.remaining[0].as_bytes());
+        let _ = self.irc_socket.flush();
+        self.remaining.remove(0);
+    }
 }
 
 impl Handler for IRCClient {
@@ -233,40 +249,27 @@ impl Handler for IRCClient {
     type Message = ();
 
     fn ready(&mut self, event_loop: &mut EventLoop<IRCClient>, token: Token, events: EventSet) {
-        //println!("{:?}", token);
-        //println!("{:?}", events);
-        //println!("{:?}", self.irc_socket);
+
+        if token != self.mio_token.unwrap() && !events.is_error() {
+            return;
+        }
 
         if events.is_writable() && self.remaining.len() != 0 {
-            self.irc_socket.write_all(self.remaining[0].as_bytes());
-            self.irc_socket.flush();
-            self.remaining.remove(0);
+            self.ready_write();
         }
 
         if events.is_readable() {
-            let mut buf: String = String::new();
-            self.irc_socket.read_to_string(&mut buf);
-
-            println!("read: {}", buf);
-
-            if let Ok(msg) = buf.parse::<Message>() {
-                self.process(&msg);
-            }
+            self.ready_read();
         }
 
-        let mut event_set = EventSet::readable();
+        let event_set;
 
-        if self.remaining.len() != 0 {
-            event_set = event_set | EventSet::writable();
+        if self.remaining.len() == 0 {
+            event_set = EventSet::readable();
+        } else {
+            event_set = EventSet::readable() | EventSet::writable();
         }
 
-
-        {
-            //let s = self.irc_socket;
-            //let t = self.mio_token;
-
-            //event_loop.reregister(&self.irc_socket, self.mio_token.unwrap(), EventSet::all(), PollOpt::all());
-            event_loop.reregister(&self.irc_socket, self.mio_token.unwrap(), event_set, PollOpt::oneshot());
-        }
+        let _ = event_loop.reregister(&self.irc_socket, self.mio_token.unwrap(), event_set, PollOpt::oneshot());
     }
 }

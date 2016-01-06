@@ -1,7 +1,7 @@
 
 use irc_client::regex::Regex;
 use std::fmt;
-use std::fmt::{Debug, Display, Formatter};
+use std::fmt::{Debug, Display};
 use std::str::FromStr;
 
 pub struct Message {
