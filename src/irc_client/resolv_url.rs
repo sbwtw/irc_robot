@@ -57,6 +57,8 @@ pub mod url {
     fn test() {
         assert_eq!(get_url("abchttps://a.b.com").unwrap(), "https://a.b.com");
         assert_eq!(resolv_url("ftps://a.b.com").is_none(), true);
+        // not exist page
+        assert_eq!(resolv_url("https://fuck.b.com").is_none(), true);
         assert_eq!(resolv_url("http://www.baidu.com").unwrap(), "↑ Title: 百度一下，你就知道");
         assert_eq!(resolv_url("https://web.wechat.com").unwrap(), "↑ Title: Web WeChat");
         assert_eq!(resolv_url("http://hyper.rs/asfsd").unwrap(), "↑ Err: 404 Not Found");
