@@ -73,7 +73,7 @@ impl IRCClient {
                                                   &self.irc_real_name);
         self.command(command);
 
-        self.join_channels();
+        //self.join_channels();
     }
 
     // execute a command
