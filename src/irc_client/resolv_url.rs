@@ -3,7 +3,10 @@ pub mod url {
 
     use irc_client::regex::Regex;
     use irc_client::hyper;
+    use irc_client::hyper::mime;
     use irc_client::hyper::Client;
+    use irc_client::hyper::client::response::Response;
+    use irc_client::hyper::header::*;
     use std::io::Read;
     use std::time::Duration;
 
@@ -30,16 +33,20 @@ pub mod url {
             return Some(res);
         }
 
-        let mut text = String::new();
-        response.read_to_string(&mut text).unwrap();
+        let content_type = response.headers.get::<ContentType>();
 
-        let title = Regex::new(r"(?i)<title>(.+)</title>").unwrap();
-        if let Some(t) = title.captures(&text[..]) {
-            let msg = format!("↑ Title: {}", t.at(1).unwrap());
-            Some(msg)
-        } else {
-            println!("Cant find title");
-            None
+        if content_type.is_none() {
+            return None;
+        }
+
+        let content_type = content_type.unwrap().clone();
+        //println!("{:?}, {}, {}", content_type, content_type.0, content_type.1);
+
+        let text: mime::Mime = "text/html".parse().unwrap();
+
+        match content_type.0 {
+            text => is_html(&mut response),
+            _ => None,
         }
     }
 
@@ -49,6 +56,21 @@ pub mod url {
         if let Some(t) = regex.find(content) {
             Some(&content[t.0..t.1])
         } else {
+            None
+        }
+    }
+
+    fn is_html(response: &mut Response) -> Option<String> {
+
+        let mut text = String::new();
+        response.read_to_string(&mut text).unwrap();
+
+        let title = Regex::new(r"(?i)<title>(.+)</title>").unwrap();
+        if let Some(t) = title.captures(&text[..]) {
+            let msg = format!("↑ Title: {}", t.at(1).unwrap());
+            Some(msg)
+        } else {
+            println!("Cant find title");
             None
         }
     }

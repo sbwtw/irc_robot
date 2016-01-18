@@ -9,7 +9,6 @@ pub struct Database {
 
 impl Database {
     pub fn new() {
-        //let client = Client::with_uri("mongodb://10.0.1.29:27017/")
-            //.ok().expect("Failed to connect.");
+        //let client = Client::connect("10.0.1.29", 27017);
     }
 }

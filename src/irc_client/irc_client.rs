@@ -78,7 +78,7 @@ impl IRCClient {
 
     // execute a command
     fn command(&mut self, command: &str) {
-        println!("Command: {:?}", command);
+        println!("Command: {}", command);
 
         let buf = command.trim().to_owned() + "\n";
         self.remaining.push(buf);
@@ -86,7 +86,6 @@ impl IRCClient {
 
     // process message
     fn process(&mut self, msg: &Message) {
-        println!("Process: {}", msg);
 
         match msg.command() {
             "PING" => self.process_ping(msg),
@@ -129,7 +128,6 @@ impl IRCClient {
 
     // process PING command
     fn process_ping(&mut self, msg: &Message) {
-        println!("Process PING command");
         let command = "PONG ".to_owned() + msg.servername();
         self.command(&command);
     }
@@ -151,6 +149,11 @@ impl IRCClient {
 
         if let Some(res) = url::resolv_url(content) {
             self.privmsg(msg.channel(), &res[..]);
+        }
+
+        if content.contains(&self.irc_nick_name) {
+            let content = content.replace(&self.irc_nick_name, msg.nickname());
+            self.privmsg(msg.channel(), &content);
         }
     }
 
