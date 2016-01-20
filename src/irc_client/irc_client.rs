@@ -123,11 +123,10 @@ impl IRCClient {
 
         let tips = vec!["hi", "hello", "how are you", "hey", "welcome"];
         let smile = vec![":)", ":P", "-_-", ":-/", ":-\\"];
+        let mut rng = rand::StdRng::new().unwrap();
 
         if nick != self.irc_nick_name && nick != "ChanServ" {
-            self.privmsg(msg.channel(), &format!("{}, {} {}", tips[thread_rng().gen_range(0, 5)],
-                                                                nick,
-                                                                smile[thread_rng().gen_range(0, 5)]));
+            self.privmsg(msg.channel(), &format!("{}, {} {}", rng.choose(&tips).unwrap(), nick, rng.choose(&smile).unwrap()));
         }
     }
 
