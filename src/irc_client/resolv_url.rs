@@ -3,7 +3,7 @@ pub mod url {
 
     use irc_client::regex::Regex;
     use irc_client::hyper;
-    use irc_client::hyper::mime;
+    use irc_client::hyper::mime::*;
     use irc_client::hyper::Client;
     use irc_client::hyper::client::response::Response;
     use irc_client::hyper::header::*;
@@ -33,19 +33,27 @@ pub mod url {
             return Some(res);
         }
 
-        let content_type = response.headers.get::<ContentType>();
+        let op;
+        {
+            let content_type = response.headers.get::<ContentType>();
+            if content_type.is_none() {
+                return None;
+            }
+            let content_type = content_type.unwrap();
 
-        if content_type.is_none() {
-            return None;
+            match **content_type {
+                Mime(TopLevel::Text, SubLevel::Html, _) => op = 1,
+                Mime(TopLevel::Image, _, _) => op = 2,
+                _ => {
+                    println!("unsupport op: {:?}", **content_type);
+                    op = -1;
+                },
+            }
         }
 
-        let content_type = content_type.unwrap().clone();
-        //println!("{:?}, {}, {}", content_type, content_type.0, content_type.1);
-
-        let text: mime::Mime = "text/html".parse().unwrap();
-
-        match content_type.0 {
-            text => is_html(&mut response),
+        match op {
+            1 => is_html(&mut response),
+            2 => is_image(&mut response),
             _ => None,
         }
     }
@@ -58,6 +66,10 @@ pub mod url {
         } else {
             None
         }
+    }
+
+    fn is_image(response: &mut Response) -> Option<String> {
+        None
     }
 
     fn is_html(response: &mut Response) -> Option<String> {
