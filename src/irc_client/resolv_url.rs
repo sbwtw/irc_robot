@@ -59,7 +59,7 @@ pub mod url {
     }
 
     pub fn get_url(content: &str) -> Option<&str> {
-        let regex = Regex::new(r"(https?|ftp)://[\S]+").unwrap();
+        let regex = Regex::new(r"(?i)(https|http|ftp)://[\S/]+").unwrap();
 
         if let Some(t) = regex.find(content) {
             Some(&content[t.0..t.1])
@@ -89,8 +89,11 @@ pub mod url {
 
     #[test]
     fn test() {
-        assert_eq!(get_url("abchttps://a.b.com").unwrap(), "https://a.b.com");
-        assert_eq!(resolv_url("ftps://a.b.com").is_none(), true);
+        assert_eq!(get_url("abchttps://a.b.com/").unwrap(), "https://a.b.com/");
+        assert_eq!(get_url("ftps://a.b.com").is_none(), true);
+        assert_eq!(get_url("ftp://a.b.com/c/").is_none(), false);
+        assert_eq!(get_url("http://packages.deepin.org").is_none(), false);
+        assert_eq!(get_url("http://packages.deepin.org/deepin/pool/main/d/deepin-boot-maker/").is_none(), false);
         // not exist page
         assert_eq!(resolv_url("https://fuck.b.com").is_none(), true);
         assert_eq!(resolv_url("http://www.baidu.com").unwrap(), "↑ Title: 百度一下，你就知道");
