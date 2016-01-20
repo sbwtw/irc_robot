@@ -92,7 +92,6 @@ pub mod url {
         assert_eq!(get_url("abchttps://a.b.com/").unwrap(), "https://a.b.com/");
         assert_eq!(get_url("ftps://a.b.com").is_none(), true);
         assert_eq!(get_url("ftp://a.b.com/c/").is_none(), false);
-        assert_eq!(get_url("http://packages.deepin.org").is_none(), false);
         assert_eq!(get_url("http://packages.deepin.org/deepin/pool/main/d/deepin-boot-maker/").is_none(), false);
         // not exist page
         assert_eq!(resolv_url("https://fuck.b.com").is_none(), true);

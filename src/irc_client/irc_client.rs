@@ -121,8 +121,13 @@ impl IRCClient {
         println!("Process JOIN command");
         let nick = msg.nickname();
 
-        if nick != self.irc_nick_name {
-            self.privmsg(msg.channel(), &format!("hi, {} :-)", nick));
+        let tips = vec!["hi", "hello", "how are you", "hey", "welcome"];
+        let smile = vec![":)", ":P", "-_-", ":-/", ":-\\"];
+
+        if nick != self.irc_nick_name && nick != "ChanServ" {
+            self.privmsg(msg.channel(), &format!("{}, {} {}", tips[thread_rng().gen_range(0, 5)],
+                                                                nick,
+                                                                smile[thread_rng().gen_range(0, 5)]));
         }
     }
 

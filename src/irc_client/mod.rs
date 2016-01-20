@@ -3,6 +3,7 @@ extern crate regex;
 extern crate hyper;
 extern crate bson;
 extern crate mongodb;
+extern crate rand;
 
 pub use self::irc_client::IRCClient;
 pub use self::message::Message;
