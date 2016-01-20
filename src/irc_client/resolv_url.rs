@@ -7,6 +7,8 @@ pub mod url {
     use irc_client::hyper::Client;
     use irc_client::hyper::client::response::Response;
     use irc_client::hyper::header::*;
+    use irc_client::image;
+    use irc_client::image::GenericImage;
     use std::io::Read;
     use std::time::Duration;
 
@@ -69,6 +71,14 @@ pub mod url {
     }
 
     fn is_image(response: &mut Response) -> Option<String> {
+        let mut buffer = Vec::new();
+
+        response.read_to_end(&mut buffer);
+
+        if let Ok(image) = image::load_from_memory(&buffer) {
+            return Some(format!("↑ Image: {}x{}", image.width(), image.height()));
+        }
+
         None
     }
 

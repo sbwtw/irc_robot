@@ -4,6 +4,7 @@ extern crate hyper;
 extern crate bson;
 extern crate mongodb;
 extern crate rand;
+extern crate image;
 
 pub use self::irc_client::IRCClient;
 pub use self::message::Message;
