@@ -81,7 +81,7 @@ pub mod url {
         response.read_to_end(&mut buffer);
 
         if let Ok(image) = image::load_from_memory(&buffer) {
-            return Some(format!("↑ Image/{}: {} x {}",
+            return Some(format!("↑ Image/{}, size = {}x{} pixels",
                                 (**response.headers.get::<ContentType>().unwrap()).1,
                                 image.width(), image.height()));
         }

@@ -152,7 +152,7 @@ impl IRCClient {
         let content = msg.content();
 
         if let Some(res) = url::resolv_url(content) {
-            self.privmsg(msg.channel(), &res[..]);
+            self.privmsg(msg.channel(), &format!("{}, {}", msg.nickname(), &res[..]));
         }
 
         if content.contains(&self.irc_nick_name) {
