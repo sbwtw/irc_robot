@@ -41,6 +41,16 @@ impl Message {
         })
     }
 
+    pub fn is_maybe_bot(&self) -> bool {
+        let nick = self.nickname();
+
+        if nick.contains("bot") || nick.contains("bridge") {
+            true
+        } else {
+            false
+        }
+    }
+
     pub fn command(&self) -> &str {
         &self.command
     }
@@ -115,7 +125,7 @@ impl FromStr for Message {
 }
 
 #[test]
-fn message_test() {
+fn test() {
     let msg = Message::new(":username1!~username1@8.8.8.8 JOIN #test1\r\n").unwrap();
     assert_eq!(msg.command(), "JOIN");
     assert_eq!(msg.params(), "#test1");
@@ -135,4 +145,13 @@ fn message_test() {
 
     let msg: Message = ":wilhelm.freenode.net 433 * username1 :Nickname is already in use.".parse().unwrap();
     assert_eq!(msg.command(), "433");
+}
+
+#[test]
+fn test_brige_bot() {
+    let msg = ":somebot!~a@1.1.1.1 PRIVMSG #test1 :some-bot realname: realcontent".parse::<Message>().unwrap();
+    assert_eq!(msg.is_maybe_bot(), true);
+
+    let msg = ":somebridge!~a@1.1.1.1 PRIVMSG #test1 :some-bot realname: realcontent".parse::<Message>().unwrap();
+    assert_eq!(msg.is_maybe_bot(), true);
 }

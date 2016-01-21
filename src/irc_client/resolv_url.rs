@@ -20,6 +20,12 @@ pub mod url {
         }
 
         let url = url.unwrap();
+
+        // parse github
+        //if is_url_github(url) {
+            //return parse_github(url);
+        //}
+
         let mut request = Client::new();
         request.set_read_timeout(Some(Duration::from_secs(5)));
         let response = request.get(url).send();
@@ -72,11 +78,12 @@ pub mod url {
 
     fn is_image(response: &mut Response) -> Option<String> {
         let mut buffer = Vec::new();
-
         response.read_to_end(&mut buffer);
 
         if let Ok(image) = image::load_from_memory(&buffer) {
-            return Some(format!("↑ Image: {}x{}", image.width(), image.height()));
+            return Some(format!("↑ Image/{}: {} x {}",
+                                (**response.headers.get::<ContentType>().unwrap()).1,
+                                image.width(), image.height()));
         }
 
         None
@@ -95,6 +102,15 @@ pub mod url {
             println!("Cant find title");
             None
         }
+    }
+
+    // git hub api address: https://api.github.com/repos/sbwtw/irc_robot
+    fn parse_github(res: &str) -> Option<String> {
+        None
+    }
+
+    fn is_url_github(res: &str) -> bool {
+        res.starts_with("https://github.com/")
     }
 
     #[test]
@@ -124,5 +140,10 @@ pub mod url {
     #[test]
     fn test_404() {
         assert_eq!(resolv_url("http://hyper.rs/asfsd").unwrap(), "↑ Err: 404 Not Found");
+    }
+
+    #[test]
+    fn test_is_url_github() {
+        assert_eq!(is_url_github("https://github.com/sbwtw/irc_robot"), true);
     }
 }
