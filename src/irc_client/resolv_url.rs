@@ -103,10 +103,26 @@ pub mod url {
         assert_eq!(get_url("ftps://a.b.com").is_none(), true);
         assert_eq!(get_url("ftp://a.b.com/c/").is_none(), false);
         assert_eq!(get_url("http://packages.deepin.org/deepin/pool/main/d/deepin-boot-maker/").is_none(), false);
+    }
+
+    #[test]
+    fn test_not_exist_page() {
         // not exist page
         assert_eq!(resolv_url("https://fuck.b.com").is_none(), true);
+    }
+
+    #[test]
+    fn test_baidu() {
         assert_eq!(resolv_url("http://www.baidu.com").unwrap(), "↑ Title: 百度一下，你就知道");
+    }
+
+    #[test]
+    fn test_wechat() {
         assert_eq!(resolv_url("https://web.wechat.com").unwrap(), "↑ Title: Web WeChat");
+    }
+
+    #[test]
+    fn test_404() {
         assert_eq!(resolv_url("http://hyper.rs/asfsd").unwrap(), "↑ Err: 404 Not Found");
     }
 }

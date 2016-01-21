@@ -122,7 +122,7 @@ impl IRCClient {
         let nick = msg.nickname();
 
         let tips = vec!["hi", "hello", "how are you", "hey", "welcome"];
-        let smile = vec![":)", ":P", "-_-", ":-/", ":-\\"];
+        let smile = vec![":)", "xD", ":D", ":P", "-_-", ":-/", ":-\\"];
         let mut rng = rand::StdRng::new().unwrap();
 
         if nick != self.irc_nick_name && nick != "ChanServ" {
