@@ -5,10 +5,12 @@ pub mod url {
     use irc_client::hyper;
     use irc_client::hyper::mime::*;
     use irc_client::hyper::Client;
+    use irc_client::hyper::client::RequestBuilder;
     use irc_client::hyper::client::response::Response;
     use irc_client::hyper::header::*;
     use irc_client::image;
     use irc_client::image::GenericImage;
+    use irc_client::rustc_serialize::json::Json;
     use std::io::Read;
     use std::time::Duration;
 
@@ -22,9 +24,12 @@ pub mod url {
         let url = url.unwrap();
 
         // parse github
-        //if is_url_github(url) {
-            //return parse_github(url);
-        //}
+        if is_url_github(url) {
+            let res = parse_github(url);
+            if res.is_some() {
+                return res;
+            }
+        }
 
         let mut request = Client::new();
         request.set_read_timeout(Some(Duration::from_secs(5)));
@@ -78,7 +83,7 @@ pub mod url {
 
     fn is_image(response: &mut Response) -> Option<String> {
         let mut buffer = Vec::new();
-        response.read_to_end(&mut buffer);
+        let _ = response.read_to_end(&mut buffer);
 
         if let Ok(image) = image::load_from_memory(&buffer) {
             return Some(format!("↑ Image/{}, size = {}x{} pixels",
@@ -105,12 +110,46 @@ pub mod url {
     }
 
     // git hub api address: https://api.github.com/repos/sbwtw/irc_robot
+    // request must be have user-agent field.
     fn parse_github(res: &str) -> Option<String> {
-        None
+
+        let regex = Regex::new(r"(?i)//github\.com/([-_\w]+)/([-_\w]+)").unwrap();
+        if let Some(t) = regex.captures(res) {
+            let owner: &str = t.at(1).unwrap();
+            let proj: &str = t.at(2).unwrap();
+            let url = format!("https://api.github.com/repos/{}/{}", owner, proj);
+
+            let mut request = Client::new();
+            request.set_read_timeout(Some(Duration::from_secs(5)));
+            let response = request.get(&url).header(UserAgent(String::new())).send();
+
+            if response.is_err() {
+                return None;
+            }
+
+            let mut response = response.unwrap();
+            if response.status != hyper::Ok {
+                return None;
+            }
+
+            let mut res = String::new();
+            response.read_to_string(&mut res);
+            let json = Json::from_str(&res).unwrap();
+
+            let name = json.find("name").unwrap().as_string().unwrap();
+            let description = json.find("description").unwrap().as_string().unwrap();
+            let stars_count = json.find("stargazers_count").unwrap().as_i64().unwrap();
+            let forks_count = json.find("forks_count").unwrap().as_i64().unwrap();
+
+            Some(format!("↑ Github/{}: {}. Star: {}, Fork: {}.", name, description, stars_count, forks_count))
+        } else {
+            None
+        }
     }
 
     fn is_url_github(res: &str) -> bool {
-        res.starts_with("https://github.com/")
+        res.starts_with("https://github.com/") ||
+        res.starts_with("http://github.com/")
     }
 
     #[test]
@@ -140,6 +179,12 @@ pub mod url {
     #[test]
     fn test_404() {
         assert_eq!(resolv_url("http://hyper.rs/asfsd").unwrap(), "↑ Err: 404 Not Found");
+    }
+
+    #[test]
+    fn test_parse_github() {
+        assert_eq!(resolv_url("https://github.com/sbwtw/irc_robot").unwrap(),
+                   "↑ Github/irc_robot: an irc_robot written in rust. Star: 1, Fork: 0.");
     }
 
     #[test]

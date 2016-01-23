@@ -5,6 +5,7 @@ extern crate bson;
 extern crate mongodb;
 extern crate rand;
 extern crate image;
+extern crate rustc_serialize;
 
 pub use self::irc_client::IRCClient;
 pub use self::message::Message;

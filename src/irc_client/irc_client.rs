@@ -173,7 +173,7 @@ impl IRCClient {
 
     fn ready_read(&mut self) {
         let mut buf: String = String::new();
-        self.irc_socket.read_to_string(&mut buf);
+        let _ = self.irc_socket.read_to_string(&mut buf);
 
         let list: Vec<&str> = buf.split('\n').collect();
 
