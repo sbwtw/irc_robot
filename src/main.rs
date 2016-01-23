@@ -2,6 +2,8 @@
 #![feature(lookup_host)]
 #![feature(ip_addr)]
 
+#[macro_use]
+extern crate bson;
 extern crate mio;
 
 mod irc_client;

@@ -2,8 +2,9 @@
 extern crate rand;
 extern crate mio;
 
-use irc_client::Message;
 use irc_client::url;
+use irc_client::Message;
+use irc_client::Database;
 
 use std::io::*;
 use std::net::SocketAddr;
@@ -18,6 +19,7 @@ pub struct IRCClient {
     irc_nick_name: String,
     irc_real_name: String,
     irc_password: String,
+    irc_database: Database,
     auto_join_channels: Vec<String>,
     mio_token: Option<Token>,
     remaining: Vec<String>,
@@ -33,6 +35,7 @@ impl IRCClient {
             irc_nick_name: "IRCRobot".to_owned(),
             irc_real_name: "IRCRobot".to_owned(),
             irc_password: "*".to_owned(),
+            irc_database: Database::new(),
             auto_join_channels: Vec::new(),
             mio_token: None,
             remaining: Vec::new(),
@@ -179,6 +182,7 @@ impl IRCClient {
 
         for item in list {
             if let Ok(msg) = item.parse::<Message>() {
+                self.irc_database.record_message(&msg);
                 self.process(&msg);
             }
         }

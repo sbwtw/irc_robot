@@ -1,7 +1,7 @@
 
+extern crate bson;
 extern crate regex;
 extern crate hyper;
-extern crate bson;
 extern crate mongodb;
 extern crate rand;
 extern crate image;

@@ -5,7 +5,6 @@ pub mod url {
     use irc_client::hyper;
     use irc_client::hyper::mime::*;
     use irc_client::hyper::Client;
-    use irc_client::hyper::client::RequestBuilder;
     use irc_client::hyper::client::response::Response;
     use irc_client::hyper::header::*;
     use irc_client::image;

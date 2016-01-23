@@ -1,4 +1,5 @@
 
+use irc_client::bson::*;
 use irc_client::regex::Regex;
 use std::fmt;
 use std::fmt::{Debug, Display};
@@ -39,6 +40,15 @@ impl Message {
             command: command,
             params: params.trim().to_owned(),
         })
+    }
+
+    pub fn as_bson_doc(&self) -> Document {
+        doc!{
+            "raw" => (self.raw_message.clone()),
+            "prefix" => (self.prefix.clone()),
+            "command" => (self.command.clone()),
+            "params" => (self.params.clone())
+        }
     }
 
     pub fn is_maybe_bot(&self) -> bool {
