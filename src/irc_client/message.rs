@@ -43,12 +43,29 @@ impl Message {
     }
 
     pub fn as_bson_doc(&self) -> Document {
-        doc!{
-            "raw" => (self.raw_message.clone()),
-            "prefix" => (self.prefix.clone()),
-            "command" => (self.command.clone()),
-            "params" => (self.params.clone())
+        let mut doc = doc!{"raw" => (self.raw_message.clone())};
+
+        if !self.channel().is_empty() {
+            doc.insert("channel".to_owned(), Bson::String(self.channel().to_owned()));
         }
+
+        if !self.nickname().is_empty() {
+            doc.insert("nick".to_owned(), Bson::String(self.nickname().to_owned()));
+        }
+
+        if !self.content().is_empty() {
+            doc.insert("content".to_owned(), Bson::String(self.content().to_owned()));
+        }
+
+        if !self.params().is_empty() {
+            doc.insert("params".to_owned(), Bson::String(self.params().to_owned()));
+        }
+
+        if !self.command().is_empty() {
+            doc.insert("command".to_owned(), Bson::String(self.command().to_owned()));
+        }
+
+        doc
     }
 
     pub fn is_maybe_bot(&self) -> bool {
