@@ -121,16 +121,16 @@ impl IRCClient {
 
     // process JOIN command
     fn process_join(&mut self, msg: &Message) {
-        println!("Process JOIN command");
-        let nick = msg.nickname();
+        //println!("Process JOIN command");
+        //let nick = msg.nickname();
 
-        let tips = vec!["hi", "hello", "how are you", "hey", "welcome"];
-        let smile = vec![":)", "xD", ":D", ":P", "-_-", ":-/", ":-\\"];
-        let mut rng = rand::StdRng::new().unwrap();
+        //let tips = vec!["hi", "hello", "how are you", "hey", "welcome"];
+        //let smile = vec![":)", "xD", ":D", ":P", "-_-", ":-/", ":-\\"];
+        //let mut rng = rand::StdRng::new().unwrap();
 
-        if nick != self.irc_nick_name && nick != "ChanServ" {
-            self.privmsg(msg.channel(), &format!("{}, {} {}", rng.choose(&tips).unwrap(), nick, rng.choose(&smile).unwrap()));
-        }
+        //if nick != self.irc_nick_name && nick != "ChanServ" {
+            //self.privmsg(msg.channel(), &format!("{}, {} {}", rng.choose(&tips).unwrap(), nick, rng.choose(&smile).unwrap()));
+        //}
     }
 
     // process PING command
