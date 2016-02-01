@@ -132,7 +132,7 @@ pub mod url {
             }
 
             let mut res = String::new();
-            response.read_to_string(&mut res);
+            let _ = response.read_to_string(&mut res);
             let json = Json::from_str(&res).unwrap();
 
             let name = json.find("name").unwrap().as_string().unwrap();
