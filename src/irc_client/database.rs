@@ -1,9 +1,12 @@
 
-//use irc_client::bson::Document;
+use irc_client::bson::Document;
 use irc_client::mongodb::Client;
 use irc_client::mongodb::ThreadedClient;
+use irc_client::mongodb::cursor::Cursor;
 use irc_client::mongodb::db::ThreadedDatabase;
+use irc_client::mongodb::error::Error;
 use irc_client::mongodb::coll::Collection;
+use irc_client::mongodb::coll::options::FindOptions;
 
 use irc_client::Message;
 
@@ -30,5 +33,14 @@ impl Database {
         //let res = 
         self.coll_message.insert_one(msg.as_bson_doc(), None).unwrap();
         //let res = self.coll_message.update_one(doc!{}, msg.as_bson_doc(), None).unwrap();
+    }
+
+    pub fn all_messages(&mut self) -> Result<Cursor, Error> {
+        self.messages(None)
+    }
+
+    pub fn messages(&mut self, option: Option<FindOptions>) -> Result<Cursor, Error> {
+        let mut doc = doc!{"command" => "PRIVMSG"};
+        self.coll_message.find(Some(doc), option)
     }
 }
