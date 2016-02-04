@@ -17,24 +17,13 @@ fn main() {
     let cursor = db.messages(Some(option)).unwrap();
 
     for c in cursor {
-        if c.is_err() {
-            continue;
-        }
+        if c.is_err() {continue;}
 
         let bson = c.unwrap();
-        //println!("{:?}", bson);
-        let content = bson.get("content");
 
-        if content.is_none() {
-            continue;
-        }
-
-        match content.unwrap() {
-            &Bson::String(ref string) => println!("{}", string),
+        match bson.get("content") {
+            Some(&Bson::String(ref string)) => println!("{}", string),
             _ => {},
         };
-        //if let String(string) = content.unwrap() {
-            //println!("{}", string);
-        //}
     }
 }
