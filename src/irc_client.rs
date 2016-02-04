@@ -2,9 +2,9 @@
 extern crate rand;
 extern crate mio;
 
-use irc_client::url;
-use irc_client::Message;
-use irc_client::Database;
+use database::Database;
+use message::Message;
+use resolv_url::url;
 
 use std::io::*;
 use std::net::SocketAddr;

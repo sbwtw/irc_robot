@@ -1,5 +1,7 @@
 
+#[macro_use]
 extern crate bson;
+extern crate mio;
 extern crate regex;
 extern crate hyper;
 extern crate mongodb;

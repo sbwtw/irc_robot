@@ -1,16 +1,10 @@
-
-[[bin]]
-name = "irc_robot"
-path = "src/main.rs"
-
-[[bin]]
-name = "db_tools"
-path = "src/db_tools.rs"
-
 [package]
 name = "irc_robot"
 version = "0.1.0"
 authors = ["石博文 <sbw@sbw.so>"]
+
+[lib]
+name = "irc"
 
 [dependencies]
 regex = "*"

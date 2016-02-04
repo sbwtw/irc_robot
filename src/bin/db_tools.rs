@@ -1,15 +1,12 @@
 
 #[macro_use]
 extern crate bson;
-
-mod irc_client;
+extern crate mongodb;
+extern crate irc;
 
 use bson::Bson;
-use bson::Bson::*;
-use irc_client::Database;
-use irc_client::mongodb::cursor::Cursor;
-use irc_client::mongodb::error::Error;
-use irc_client::mongodb::coll::options::FindOptions;
+use irc::Database;
+use mongodb::coll::options::FindOptions;
 
 fn main() {
     let mut db = Database::new();

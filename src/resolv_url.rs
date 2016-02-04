@@ -1,15 +1,15 @@
 
 pub mod url {
 
-    use irc_client::regex::Regex;
-    use irc_client::hyper;
-    use irc_client::hyper::mime::*;
-    use irc_client::hyper::Client;
-    use irc_client::hyper::client::response::Response;
-    use irc_client::hyper::header::*;
-    use irc_client::image;
-    use irc_client::image::GenericImage;
-    use irc_client::rustc_serialize::json::Json;
+    use regex::Regex;
+    use hyper;
+    use hyper::mime::*;
+    use hyper::Client;
+    use hyper::client::response::Response;
+    use hyper::header::*;
+    use image;
+    use image::GenericImage;
+    use rustc_serialize::json::Json;
     use std::io::Read;
     use std::time::Duration;
 

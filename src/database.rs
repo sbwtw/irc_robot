@@ -1,14 +1,13 @@
 
-use irc_client::bson::Document;
-use irc_client::mongodb::Client;
-use irc_client::mongodb::ThreadedClient;
-use irc_client::mongodb::cursor::Cursor;
-use irc_client::mongodb::db::ThreadedDatabase;
-use irc_client::mongodb::error::Error;
-use irc_client::mongodb::coll::Collection;
-use irc_client::mongodb::coll::options::FindOptions;
+use mongodb::Client;
+use mongodb::ThreadedClient;
+use mongodb::cursor::Cursor;
+use mongodb::db::ThreadedDatabase;
+use mongodb::error::Error;
+use mongodb::coll::Collection;
+use mongodb::coll::options::FindOptions;
 
-use irc_client::Message;
+use Message;
 
 pub struct Database {
     //client: Client,
@@ -40,7 +39,7 @@ impl Database {
     }
 
     pub fn messages(&mut self, option: Option<FindOptions>) -> Result<Cursor, Error> {
-        let mut doc = doc!{"command" => "PRIVMSG"};
+        let doc = doc!{"command" => "PRIVMSG"};
         self.coll_message.find(Some(doc), option)
     }
 }

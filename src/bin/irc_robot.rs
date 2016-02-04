@@ -5,10 +5,9 @@
 #[macro_use]
 extern crate bson;
 extern crate mio;
+extern crate irc;
 
-mod irc_client;
-
-use irc_client::IRCClient;
+use irc::IRCClient;
 
 use mio::{Token, EventLoop, EventSet, PollOpt};
 
