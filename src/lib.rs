@@ -1,4 +1,8 @@
 
+#![feature(plugin)]
+
+#![plugin(clippy)]
+
 #[macro_use]
 extern crate bson;
 extern crate mio;
