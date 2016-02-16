@@ -201,7 +201,7 @@ impl Handler for IRCClient {
 
     fn ready(&mut self, event_loop: &mut EventLoop<IRCClient>, token: Token, events: EventSet) {
 
-        if token != self.mio_token.unwrap() && !events.is_error() {
+        if token != self.mio_token.unwrap() || events.is_error() {
             return;
         }
 
