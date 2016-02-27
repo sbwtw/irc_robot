@@ -17,14 +17,14 @@ impl Message {
         let mut prefix: String = String::new();
         let command: String;
 
-        let list: Vec<&str> = msg.split(" ").collect();
+        let list: Vec<&str> = msg.split(' ').collect();
         if list.len() < 2 {
             return Err("parse error.");
         }
 
         let first = list[0];
         let pass_size;
-        if first.starts_with(":") {
+        if first.starts_with(':') {
             prefix = list[0].to_owned();
             command = list[1].to_owned();
             pass_size = prefix.len() + command.len() + 2;

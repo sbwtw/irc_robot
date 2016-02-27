@@ -1,6 +1,8 @@
 
+#![feature(plugin)]
 #![feature(lookup_host)]
-#![feature(ip_addr)]
+
+#![plugin(clippy)]
 
 #[macro_use]
 extern crate bson;

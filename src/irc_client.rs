@@ -205,7 +205,7 @@ impl Handler for IRCClient {
             return;
         }
 
-        if events.is_writable() && self.remaining.len() != 0 {
+        if events.is_writable() && !self.remaining.is_empty() {
             self.ready_write();
         }
 
@@ -215,7 +215,7 @@ impl Handler for IRCClient {
 
         let event_set;
 
-        if self.remaining.len() == 0 {
+        if self.remaining.is_empty() {
             event_set = EventSet::readable();
         } else {
             event_set = EventSet::readable() | EventSet::writable();
