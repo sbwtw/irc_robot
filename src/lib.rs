@@ -5,6 +5,8 @@
 
 #[macro_use]
 extern crate bson;
+#[macro_use] 
+extern crate log;
 extern crate mio;
 extern crate regex;
 extern crate hyper;

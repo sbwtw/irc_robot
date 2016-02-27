@@ -8,16 +8,18 @@
 extern crate bson;
 extern crate mio;
 extern crate irc;
+extern crate env_logger;
 
 use irc::IRCClient;
-
 use mio::{Token, EventLoop, EventSet, PollOpt};
-
 use std::net::{SocketAddr};
 
 const IRC_CLIENT: Token = Token(0);
 
 fn main() {
+
+    env_logger::init().unwrap();
+
     let server = "irc.freenode.net";
     let port = 6667;
     let host = std::net::lookup_host(server).unwrap().next().unwrap().unwrap();

@@ -1,6 +1,7 @@
 
 extern crate rand;
 extern crate mio;
+extern crate env_logger;
 
 use database::Database;
 use message::Message;
@@ -81,7 +82,7 @@ impl IRCClient {
 
     // execute a command
     fn command(&mut self, command: &str) {
-        println!("Command: {}", command);
+        info!("Command: {}", command);
 
         let buf = command.trim().to_owned() + "\n";
         self.remaining.push(buf);
@@ -96,7 +97,7 @@ impl IRCClient {
             "PRIVMSG" => self.process_privmsg(msg),
             "NOTICE" => self.process_notice(msg),
             "433" => self.process_433(),
-            _ => println!("Msg not handled: {}", msg),
+            _ => debug!("Msg not handled: {}", msg),
         }
     }
 
@@ -140,7 +141,7 @@ impl IRCClient {
     }
 
     fn process_notice(&mut self, msg: &Message) {
-        println!("Process NOTICE command");
+        debug!("Process NOTICE command");
 
         let from = msg.nickname();
 
@@ -150,7 +151,7 @@ impl IRCClient {
     }
 
     fn process_privmsg(&mut self, msg: &Message) {
-        println!("Process PRIVMSG command");
+        debug!("Process PRIVMSG command");
 
         let content = msg.content();
 
@@ -165,7 +166,7 @@ impl IRCClient {
     }
 
     fn process_433(&mut self) {
-        println!("Process 433");
+        debug!("Process 433");
 
         let new_nick = format!("{}{}", self.irc_nick_name, thread_rng().gen_range(0, 100));
         self.irc_nick_name = new_nick;

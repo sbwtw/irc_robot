@@ -57,7 +57,7 @@ pub mod url {
                 Mime(TopLevel::Text, SubLevel::Html, _) => op = 1,
                 Mime(TopLevel::Image, _, _) => op = 2,
                 _ => {
-                    println!("unsupport op: {:?}", **content_type);
+                    warn!("unsupport op: {:?}", **content_type);
                     op = -1;
                 },
             }
@@ -103,7 +103,7 @@ pub mod url {
             let msg = format!("↑ Title: {}", t.at(1).unwrap());
             Some(msg)
         } else {
-            println!("Cant find title");
+            warn!("Cant find title");
             None
         }
     }
