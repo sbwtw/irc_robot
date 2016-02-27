@@ -71,11 +71,13 @@ impl Message {
     pub fn is_maybe_bot(&self) -> bool {
         let nick = self.nickname();
 
-        if nick.contains("bot") || nick.contains("bridge") {
-            true
-        } else {
-            false
-        }
+        nick.contains("bot") || nick.contains("bridge")
+
+        //if nick.contains("bot") || nick.contains("bridge") {
+            //true
+        //} else {
+            //false
+        //}
     }
 
     pub fn command(&self) -> &str {

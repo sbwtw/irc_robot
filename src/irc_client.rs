@@ -120,7 +120,7 @@ impl IRCClient {
     }
 
     // process JOIN command
-    fn process_join(&mut self, msg: &Message) {
+    fn process_join(&mut self, _msg: &Message) {
         //println!("Process JOIN command");
         //let nick = msg.nickname();
 
