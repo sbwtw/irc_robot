@@ -96,6 +96,7 @@ impl IRCClient {
             "JOIN" => self.process_join(msg),
             "PRIVMSG" => self.process_privmsg(msg),
             "NOTICE" => self.process_notice(msg),
+            "QUIT" => self.process_quit(msg),
             "433" => self.process_433(),
             _ => debug!("Msg not handled: {}", msg),
         }
@@ -175,6 +176,17 @@ impl IRCClient {
         self.command(&msg);
     }
 
+    fn process_quit(&mut self, msg: &Message) {
+        debug!("Process QUIT");
+        debug!("{} quit the {} channel", msg.nickname(), msg.channel());
+
+        self.socket = TcpStream::connect(self.socket.peer_addr().unwrap()).unwrap();
+
+        if msg.nickname() == self.irc_nick_name {
+            self.startup();
+        }
+    }
+
     fn ready_read(&mut self) {
         let mut buf: String = String::new();
         let _ = self.irc_socket.read_to_string(&mut buf);
@@ -203,6 +215,7 @@ impl Handler for IRCClient {
     fn ready(&mut self, event_loop: &mut EventLoop<IRCClient>, token: Token, events: EventSet) {
 
         if token != self.mio_token.unwrap() || events.is_error() {
+            warn!("mio error, events = {:?}", events);
             return;
         }
 

@@ -36,7 +36,7 @@ fn main() {
     irc.set_nick_name("Vivians");
     irc.set_real_name("Vivians");
     irc.set_password("Vivians");
-    irc.append_auto_join_channel("test1");
+    irc.append_auto_join_channel("deepin");
     irc.startup();
 
     let _ = event_loop.register(irc.socket(), IRC_CLIENT, EventSet::readable(), PollOpt::oneshot());
