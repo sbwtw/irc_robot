@@ -4,7 +4,7 @@ version = "0.1.0"
 dependencies = [
  "bson 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "clap 2.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
- "clippy 0.0.44 (registry+https://github.com/rust-lang/crates.io-index)",
+ "clippy 0.0.45 (registry+https://github.com/rust-lang/crates.io-index)",
  "env_logger 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "hyper 0.7.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "image 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -102,7 +102,7 @@ dependencies = [
 
 [[package]]
 name = "clippy"
-version = "0.0.44"
+version = "0.0.45"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "regex-syntax 0.2.5 (registry+https://github.com/rust-lang/crates.io-index)",
